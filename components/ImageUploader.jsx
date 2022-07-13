@@ -6,33 +6,32 @@ import { v4 } from 'uuid'
 
 const ImageUploader = () => {
 
-    const [image, setImage] = useState(null)
-    const [imageList, setImageList] = useState([])
-
+    const [imageUpload, setImageUpload] = useState(null);
+    const [imageUrls, setImageUrls] = useState([]);
     const { user } = useUserContext()
+    const imagesListRef = ref(storage, `users/${user.email}/${user.uid}/`)
 
-    const userImagesRef = ref(storage, `users/${user.email}/${user.uid}/`)
-
-    const uploadImage = () => {
-        if (!image) return;
-        const imageRef = ref(storage, `users/${user.email}/${user.uid}/${image.name + v4()}/`)
-        uploadBytes(imageRef, image).then((snapshot) => {
-            getDownloadURL(snapshot.ref).then((url) => {
-                setImageList((prev) => [...prev, url])
-                alert("Image has been uploaded")
-            })
-        })
-    }
 
     useEffect(() => {
-        listAll(userImagesRef).then((res) => {
+        listAll(imagesListRef).then((res) => {
             res.items.forEach((item) => {
                 getDownloadURL(item).then((url) => {
-                    setImageList((prev) => [...prev, url])
+                    setImageUrls((prev) => [...prev, url])
                 })
             })
         })
     }, [])
+
+    const uploadImage = () => {
+        if (imageUpload == null) return;
+        const imageRef = ref(storage, `users/${user.email}/${user.uid}/${imageUpload.name + v4()}`)
+        uploadBytes(imageRef, imageUpload).then((snapshot) => {
+            getDownloadURL(snapshot.ref).then((url) => {
+                setImageUrls((prev) => [...prev, url])
+                alert("Image has been uploaded")
+            })
+        })
+    }
 
     const deleteFromFirebase = (url) => {
         const deleteRef = ref(storage, url)
@@ -41,9 +40,9 @@ const ImageUploader = () => {
         }).catch((err) => {
             console.log(err)
         })
-    };
+    }
 
-    console.log(imageList)
+    console.log(imageUpload)
 
 
     return (
@@ -65,13 +64,13 @@ const ImageUploader = () => {
                                     <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
                                         Attach a file</p>
                                 </div>
-                                <input onChange={(e) => setImage(e.target.files[0])} type="file" className="opacity-0" />
+                                <input onChange={(e) => setImageUpload(e.target.files[0])} type="file" className="opacity-0" />
                             </label>
                         </div>
                     </div>
 
                     <div className="flex justify-center flex-col p-2">
-                        {image ? <p>{image?.name}</p> : <p>No file selected</p>}
+                        {imageUpload ? <p>{imageUpload?.name}</p> : <p>No file selected</p>}
                         <button onClick={uploadImage} className="w-full my-2 px-4 py-2 text-white bg-blue-500 rounded shadow-xl">Upload</button>
                     </div>
 
@@ -81,14 +80,15 @@ const ImageUploader = () => {
             <div className='flex flex-col mx-auto justify-center items-center'>
                 <p className=' text-xl py-8 text-gray-700 tracking-wider'>Your Images</p>
                 <div className=''>
-                    {imageList.map((url) => {
+                    {imageUrls.map((url) => {
                         return <>
-                            <div className='flex flex-col '>
-                                <img key={url} className='relative mx-auto m-4 w-[30%] h-[30%] shadow-lg hover:transition hover:scale-105 hover:duration-300' src={url} alt="" />
+                            {imageUrls.filter((urls) => urls !== url) && <div className='flex flex-col '>
+                                <img key={url} className='relative mx-auto m-4 w-[30%] h-[30%] hover:shadow-lg' src={url} alt="" />
                                 <button className='mt-[10px] text-green-700 z-40 mb-[-10px] ' onClick={() => deleteFromFirebase(url)}>
                                     Delete
                                 </button>
                             </div>
+                            }
                         </>
                     })
                     }
