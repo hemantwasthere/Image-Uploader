@@ -12,22 +12,18 @@ const Signup = () => {
     const router = useRouter()
 
 
-    const { error, loading, registerUser, setError } = useUserContext()
+    const { error, registerUser, setError } = useUserContext()
 
     const onSubmit = async (e) => {
         e.preventDefault()
         const name = nameRef.current.value
         const email = emailRef.current.value
         const password = passwordRef.current.value
-        // if (name && email && password) {
-        //     registerUser(name, email, password)
-        //     router.push('/')
-        // }
         try {
             if (name && email && password) {
-            await registerUser(name, email, password)
-            router.push('/')
-        }
+                await registerUser(name, email, password)
+                router.push('/')
+            }
         } catch (error) {
             setError(error.message)
         }
@@ -35,8 +31,6 @@ const Signup = () => {
 
     return (
         <section className="text-gray-600 body-font mx-auto flex justify-center items-center ">
-
-            {loading && <div className='text-lg text-green-400 '>Loading...</div>}
 
                 <div className="container px-5 py-24 flex justify-center items-center">
 
@@ -69,7 +63,6 @@ const Signup = () => {
 
                     </form>
                 </div>
-
 
         </section>
     )

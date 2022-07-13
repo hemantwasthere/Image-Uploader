@@ -17,7 +17,8 @@ export default function Home() {
       </Head>
 
 
-      <Navbar />
+    
+        <Navbar />
       {user && <ImageUploader />}
 
 
