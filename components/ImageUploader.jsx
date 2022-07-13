@@ -1,6 +1,30 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { storage } from '../firebase'
+import { ref, uploadBytes } from 'firebase/storage'
+import { useUserContext } from '../context/userContext'
 
 const ImageUploader = () => {
+
+    const [image, setImage] = useState(null)
+    const [imageList, setImageList] = useState([second])
+
+    const { user } = useUserContext()
+    console.log(user)
+
+
+    const uploadImage = () => {
+        if (!image) return;
+        const imageRef = ref(storage, `users/${user.email}/${user.uid}/${image.name}`)
+        uploadBytes(imageRef, image).then(() => {
+            alert("Image has been uploaded")
+        })
+    }
+
+    useEffect(() => {
+      
+    }, [])
+    
+
     return (
         <div>
             <div className="flex justify-center mt-8">
@@ -19,12 +43,13 @@ const ImageUploader = () => {
                                     <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
                                         Attach a file</p>
                                 </div>
-                                <input type="file" className="opacity-0" />
+                                <input onChange={(e) => setImage(e.target.files[0])} type="file" className="opacity-0" />
                             </label>
                         </div>
                     </div>
-                    <div className="flex justify-center p-2">
-                        <button className="w-full px-4 py-2 text-white bg-blue-500 rounded shadow-xl">Create</button>
+                    <div className="flex justify-center flex-col p-2">
+                        {image ? <p>{image?.name}</p> : <p>No file selected</p>}
+                        <button onClick={uploadImage} className="w-full my-2 px-4 py-2 text-white bg-blue-500 rounded shadow-xl">Upload</button>
                     </div>
                 </div>
             </div>
