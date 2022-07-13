@@ -83,10 +83,12 @@ const ImageUploader = () => {
                 <div className=''>
                     {imageList.map((url) => {
                         return <>
-                            <img key={url} className='mx-auto m-4 w-[30%] h-[30%] shadow-lg hover:transition hover:scale-105 hover:duration-300' src={url} alt="" />
-                            <button onClick={() => deleteFromFirebase(url)}>
-                                Delete
-                            </button>
+                            <div className='flex flex-col '>
+                                <img key={url} className='relative mx-auto m-4 w-[30%] h-[30%] shadow-lg hover:transition hover:scale-105 hover:duration-300' src={url} alt="" />
+                                <button className='mt-[10px] text-green-700 z-40 mb-[-10px] ' onClick={() => deleteFromFirebase(url)}>
+                                    Delete
+                                </button>
+                            </div>
                         </>
                     })
                     }
