@@ -1,34 +1,56 @@
 import React, { useEffect, useState } from 'react'
 import { storage } from '../firebase'
-import { ref, uploadBytes } from 'firebase/storage'
+import { deleteObject, getDownloadURL, listAll, ref, uploadBytes, } from 'firebase/storage'
 import { useUserContext } from '../context/userContext'
+import { v4 } from 'uuid'
 
 const ImageUploader = () => {
 
     const [image, setImage] = useState(null)
-    const [imageList, setImageList] = useState([second])
+    const [imageList, setImageList] = useState([])
 
     const { user } = useUserContext()
-    console.log(user)
 
+    const userImagesRef = ref(storage, `users/${user.email}/${user.uid}/`)
 
     const uploadImage = () => {
         if (!image) return;
-        const imageRef = ref(storage, `users/${user.email}/${user.uid}/${image.name}`)
-        uploadBytes(imageRef, image).then(() => {
-            alert("Image has been uploaded")
+        const imageRef = ref(storage, `users/${user.email}/${user.uid}/${image.name + v4()}/`)
+        uploadBytes(imageRef, image).then((snapshot) => {
+            getDownloadURL(snapshot.ref).then((url) => {
+                setImageList((prev) => [...prev, url])
+                alert("Image has been uploaded")
+            })
         })
     }
 
     useEffect(() => {
-      
+        listAll(userImagesRef).then((res) => {
+            res.items.forEach((item) => {
+                getDownloadURL(item).then((url) => {
+                    setImageList((prev) => [...prev, url])
+                })
+            })
+        })
     }, [])
-    
+
+    const deleteFromFirebase = (url) => {
+        const deleteRef = ref(storage, url)
+        deleteObject(deleteRef).then(() => {
+            alert("File is deleted successfully!")
+        }).catch((err) => {
+            console.log(err)
+        })
+    };
+
+    console.log(imageList)
+
 
     return (
-        <div>
+        <>
             <div className="flex justify-center mt-8">
                 <div className="max-w-2xl rounded-lg shadow-xl bg-gray-50">
+
                     <div className="m-4">
                         <label className="inline-block mb-2 text-gray-500">File Upload</label>
                         <div className="flex items-center justify-center w-full">
@@ -47,13 +69,33 @@ const ImageUploader = () => {
                             </label>
                         </div>
                     </div>
+
                     <div className="flex justify-center flex-col p-2">
                         {image ? <p>{image?.name}</p> : <p>No file selected</p>}
                         <button onClick={uploadImage} className="w-full my-2 px-4 py-2 text-white bg-blue-500 rounded shadow-xl">Upload</button>
                     </div>
+
                 </div>
             </div>
-        </div>
+
+            <div className='flex flex-col mx-auto justify-center items-center'>
+                <p className=' text-xl py-8 text-gray-700 tracking-wider'>Your Images</p>
+                <div className=''>
+                    {imageList.map((url) => {
+                        return <>
+                            <img key={url} className='mx-auto m-4 w-[30%] h-[30%] shadow-lg hover:transition hover:scale-105 hover:duration-300' src={url} alt="" />
+                            <button onClick={() => deleteFromFirebase(url)}>
+                                Delete
+                            </button>
+                        </>
+                    })
+                    }
+                </div>
+            </div>
+
+
+        </>
+
     )
 }
 

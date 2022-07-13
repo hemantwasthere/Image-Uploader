@@ -9,6 +9,7 @@ export const useUserContext = () => useContext(UserContext);
 export const UserContextProvider = ({ children }) => {
     const [user, setUser] = useState(null)
     const [error, setError] = useState("")
+    
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, res => {
@@ -38,7 +39,7 @@ export const UserContextProvider = ({ children }) => {
     const forgotPassword = (email) => {
         return sendPasswordResetEmail(auth, email)
     }
-
+    
     const contextValue = {
         user,
         error,
@@ -46,7 +47,7 @@ export const UserContextProvider = ({ children }) => {
         signInUser,
         logoutUser,
         forgotPassword,
-        setError
+        setError,
     }
 
     return <UserContext.Provider value={contextValue} >
