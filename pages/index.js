@@ -1,8 +1,13 @@
 import Head from 'next/head'
 import ImageUploader from '../components/ImageUploader'
 import Navbar from '../components/Navbar'
+import { useUserContext } from '../context/userContext'
 
 export default function Home() {
+
+
+  const { user } = useUserContext()
+
   return (
     <div>
       <Head>
@@ -11,12 +16,12 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Navbar/>
 
-    <ImageUploader/>
+      <Navbar />
+      {user && <ImageUploader />}
 
 
-    
+
     </div>
   )
 }

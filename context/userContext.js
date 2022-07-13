@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import { createUserWithEmailAndPassword, signInWithEmailAndPassword, onAuthStateChanged, updateProfile, signOut, sendPasswordResetEmail } from "firebase/auth";
 import { auth } from "../firebase";
+import { useRouter } from "next/router";
 
 const UserContext = createContext();
 
@@ -11,6 +12,8 @@ export const UserContextProvider = ({ children }) => {
     const [loading, setLoading] = useState()
     const [error, setError] = useState("")
 
+    const router = useRouter()
+
     useEffect(() => {
         setLoading(true)
         const unsubscribe = onAuthStateChanged(auth, res => {
@@ -18,33 +21,43 @@ export const UserContextProvider = ({ children }) => {
             setError("")
             setLoading(false)
         })
-        return unsubscribe
+        // return unsubscribe
+        return () => unsubscribe()
     }, [])
 
 
     const registerUser = (name, email, password) => {
         setLoading(true)
-        createUserWithEmailAndPassword(auth, email, password)
+        // createUserWithEmailAndPassword(auth, email, password)
+        //     .then(() => {
+        //         return updateProfile(auth.currentUser, {
+        //             displayName: name
+        //         })
+        //     })
+        //     .then(res => console.log(res))
+        //     .catch(err => setError(err.message))
+        //     .finally(setLoading(false))
+
+        return createUserWithEmailAndPassword(auth, email, password)
             .then(() => {
-                return updateProfile(auth.currentUser, {
+                updateProfile(auth.currentUser, {
                     displayName: name
                 })
-            })
-            .then(res => console.log(res))
-            .catch(err => setError(err.message))
-            .finally(setLoading(false))
+            }).finally(setLoading(false))
     }
 
     const signInUser = (email, password) => {
         setLoading(true)
-        signInWithEmailAndPassword(auth, email, password)
-            .then(res => console.log(res))
-            .catch(err => setError(err.message))
-            .finally(setLoading(false))
+        // signInWithEmailAndPassword(auth, email, password)
+        //     .then(res => console.log(res))
+        //     .catch(err => setError(err.message))
+        //     .finally(setLoading(false))
+        return signInWithEmailAndPassword(auth, email, password).finally(setLoading(false))
+
     }
 
     const logoutUser = () => {
-        signOut(auth)
+        return signOut(auth)
     }
 
     const forgotPassword = (email) => {
@@ -58,7 +71,8 @@ export const UserContextProvider = ({ children }) => {
         registerUser,
         signInUser,
         logoutUser,
-        forgotPassword
+        forgotPassword,
+        setError
     }
 
     return <UserContext.Provider value={contextValue} >
