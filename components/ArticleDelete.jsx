@@ -20,9 +20,11 @@ export default function DeleteArticle({ id, imageUrl }) {
     };
     return (
         <div>
-            <button onClick={handleDelete} className="bg-red-400 py-2 w-full rounded-md text-white m-3 ">
-                Delete
-            </button>
+             <i
+        className="fa fa-times bg-red-400 py-2 w-full rounded-md text-white m-3 "
+        onClick={handleDelete}
+        style={{ cursor: "pointer" }}
+      />
         </div>
     );
 }
