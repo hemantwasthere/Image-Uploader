@@ -1,12 +1,11 @@
 import Head from 'next/head'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
 import ImageUploader from '../components/ImageUploader'
 import Navbar from '../components/Navbar'
-import { useUserContext } from '../context/userContext'
 
 export default function Home() {
 
-
-  const { user } = useUserContext()
 
   return (
     <div>
@@ -17,10 +16,9 @@ export default function Home() {
       </Head>
 
 
-    
-        <Navbar />
-      {user && <ImageUploader />}
-
+      <Navbar />
+      <ToastContainer/>
+      <ImageUploader />
 
 
     </div>

@@ -1,48 +1,87 @@
 import React, { useEffect, useState } from 'react'
-import { storage } from '../firebase'
-import { deleteObject, getDownloadURL, listAll, ref, uploadBytes, } from 'firebase/storage'
-import { useUserContext } from '../context/userContext'
-import { v4 } from 'uuid'
+import { db, storage } from '../firebase'
+import { addDoc, collection, deleteDoc, onSnapshot, orderBy, query, Timestamp } from 'firebase/firestore'
+import { deleteObject, getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
+import { toast } from 'react-toastify'
+import ArticleDelete from './ArticleDelete'
+
 
 const ImageUploader = () => {
 
-    const [imageUpload, setImageUpload] = useState(null);
-    const [imageUrls, setImageUrls] = useState([]);
-    const { user } = useUserContext()
-    const imagesListRef = ref(storage, `users/${user.email}/${user.uid}/`)
+    const [articles, setArticles] = useState([])
+    const [formData, setFormData] = useState({
+        title: "",
+        description: "",
+        image: "",
+        createdAt: Timestamp.now().toDate()
+    })
+    const [progress, setProgress] = useState(0)
 
 
     useEffect(() => {
-        listAll(imagesListRef).then((res) => {
-            res.items.forEach((item) => {
-                getDownloadURL(item).then((url) => {
-                    setImageUrls((prev) => [...prev, url])
+        const articleRef = collection(db, "articles");
+        const q = query(articleRef, orderBy("createdAt", "desc"));
+        onSnapshot(q, (snapshot) => {
+            const articles = snapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+            setArticles(articles);
+            console.log(articles);
+        });
+    }, []);
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const handleImageChange = (e) => {
+        setFormData({ ...formData, image: e.target.files[0] });
+    };
+
+    const handlePublish = () => {
+        if (!formData.title || !formData.description || !formData.image) {
+            alert("Please fill all the fields");
+            return;
+        }
+
+        const storageRef = ref(
+            storage,
+            `/images/${Date.now()}${formData.image.name}`
+        );
+
+        const uploadImage = uploadBytesResumable(storageRef, formData.image);
+        uploadImage.on("state_changed", (snapshot) => {
+            const progressPercent = Math.round(
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100);
+            setProgress(progressPercent);
+        },
+            (err) => { console.log(err); },
+            () => {
+                setFormData({
+                    title: "",
+                    description: "",
+                    image: "",
+                });
+
+                getDownloadURL(uploadImage.snapshot.ref).then((url) => {
+                    const articleRef = collection(db, "articles");
+                    addDoc(articleRef, {
+                        title: formData.title,
+                        description: formData.description,
+                        imageUrl: url,
+                        createdAt: Timestamp.now().toDate()
+                    }).then(() => {
+                        toast("Article added successfully", { type: "success" });
+                        setProgress(0);
+                    })
+                        .catch((err) => {
+                            toast("Error adding article", { type: "error" });
+                        });
                 })
-            })
-        })
-    }, [])
+            });
+    };
 
-    const uploadImage = () => {
-        if (imageUpload == null) return;
-        const imageRef = ref(storage, `users/${user.email}/${user.uid}/${imageUpload.name + v4()}`)
-        uploadBytes(imageRef, imageUpload).then((snapshot) => {
-            getDownloadURL(snapshot.ref).then((url) => {
-                setImageUrls((prev) => [...prev, url])
-                alert("Image has been uploaded")
-            })
-        })
-    }
-
-    const deleteFromFirebase = (url) => {
-        const deleteRef = ref(storage, url)
-        deleteObject(deleteRef).then(() => {
-            alert("File is deleted successfully!")
-        }).catch((err) => {
-            console.log(err)
-        })
-    }
-
-    console.log(imageUpload)
 
 
     return (
@@ -64,32 +103,46 @@ const ImageUploader = () => {
                                     <p className="pt-1 text-sm tracking-wider text-gray-400 group-hover:text-gray-600">
                                         Attach a file</p>
                                 </div>
-                                <input onChange={(e) => setImageUpload(e.target.files[0])} type="file" className="opacity-0" />
+                                <input name='image' onChange={(e) => handleImageChange(e)} type="file" className="opacity-0" />
                             </label>
                         </div>
                     </div>
 
+                    <div className="p-2">
+                        <label htmlFor="text" className="leading-7 text-sm text-gray-600">Title</label>
+                        <input onChange={(e) => handleChange(e)} value={formData.title} type="text" id="title" name="title" className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                    </div>
+
+                    <div className="p-2">
+                        <label htmlFor="text" className="leading-7 text-sm text-gray-600">Description</label>
+                        <textarea onChange={(e) => handleChange(e)} value={formData.description} type="text" id="description" name="description" className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" />
+                    </div>
+
                     <div className="flex justify-center flex-col p-2">
-                        {imageUpload ? <p>{imageUpload?.name}</p> : <p>No file selected</p>}
-                        <button onClick={uploadImage} className="w-full my-2 px-4 py-2 text-white bg-blue-500 rounded shadow-xl">Upload</button>
+                        {formData.image?.name ? <p>{formData.image?.name}</p> : <p>No file selected</p>}
+                        <button onClick={handlePublish} className="w-full my-2 px-4 py-2 text-white bg-blue-500 rounded shadow-xl">Upload</button>
                     </div>
 
                 </div>
             </div>
 
             <div className='flex flex-col mx-auto justify-center items-center'>
-                <p className=' text-xl py-8 text-gray-700 tracking-wider'>Your Images</p>
+                {articles.length > 0 && <p className=' text-xl py-8 text-gray-700 tracking-wider'>Your articles</p>}
                 <div className=''>
-                    {imageUrls.map((url) => {
-                        return <>
-                            {imageUrls.filter((urls) => urls !== url) && <div className='flex flex-col '>
-                                <img key={url} className='relative mx-auto m-4 w-[30%] h-[30%] hover:shadow-lg' src={url} alt="" />
-                                <button className='mt-[10px] text-green-700 z-40 mb-[-10px] ' onClick={() => deleteFromFirebase(url)}>
-                                    Delete
-                                </button>
+                    {articles.map(({ id, title, description, imageUrl, createdAt }) => {
+                        return <div key={id} className='flex flex-col '>
+                            <div className='row'>
+                                <div className='' >
+                                    <img className='h-[180px] w-[180px] ' src={imageUrl} alt="imageUrl" />
+                                </div>
+                                <div className='pl-3' >
+                                    <h2>{title}</h2>
+                                    <p>{createdAt.toDate().toDateString()}</p>
+                                    <h4>{description}</h4>
+                                    <ArticleDelete id={id} imageUrl={imageUrl} />
+                                </div>
                             </div>
-                            }
-                        </>
+                        </div>
                     })
                     }
                 </div>
