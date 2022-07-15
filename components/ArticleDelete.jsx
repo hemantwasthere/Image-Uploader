@@ -3,6 +3,8 @@ import React from "react";
 import { db, storage } from "../firebase";
 import { toast } from "react-toastify";
 import { deleteObject, ref } from "firebase/storage";
+import { AiOutlineClose } from 'react-icons/ai'
+
 
 export default function DeleteArticle({ id, imageUrl }) {
     const handleDelete = async () => {
@@ -19,12 +21,6 @@ export default function DeleteArticle({ id, imageUrl }) {
         }
     };
     return (
-        <div>
-             <i
-        className="fa fa-times bg-red-400 py-2 w-full rounded-md text-white m-3 "
-        onClick={handleDelete}
-        style={{ cursor: "pointer" }}
-      />
-        </div>
+        <p onClick={handleDelete} className="cursor-pointer" >Delete</p>
     );
 }
