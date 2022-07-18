@@ -149,10 +149,10 @@ const ImageUploader = () => {
 
             {articles.length > 0 && <p className='fixed right-[690px] text-xl py-8 top-[80px] font-bold text-gray-700 tracking-wider'>Your Uploads</p>}
 
-            <div className='mt-32 col-span-1 left-[700px] px-5 py-2 fixed overflow-y-scroll scrollbar-thin scrollbar-thumb-black h-[100vh] top-8 scroll-smooth w-fit'>
+            <div className='mt-32 col-span-1 left-[700px] fixed px-5 py-2 overflow-y-scroll scrollbar-thin scrollbar-thumb-black h-[72vh] top-8 scroll-smooth w-fit'>
                 <div className=' h-fit '>
                     {articles.map(({ id, title, description, imageUrl, createdAt }) => {
-                        return <div key={id} className="rounded-lg shadow-lg mb-5 overflow-hidden border h-fit w-[500px] bg-white md:mx-0 lg:mx-0">
+                        return <div key={id} className="rounded-lg shadow-lg mb-5 overflow-hidden border h-fit w-[500px]  bg-white md:mx-0 lg:mx-0">
                             <img className="w-full bg-cover w-[700px] h-[250px]" src={imageUrl} />
                             <div className="px-3 pb-2">
                                 <div className="pt-1">
