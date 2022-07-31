@@ -3,7 +3,6 @@ import React from "react";
 import { db, storage } from "../firebase";
 import { toast } from "react-toastify";
 import { deleteObject, ref } from "firebase/storage";
-import { AiOutlineClose } from 'react-icons/ai'
 
 
 export default function DeleteArticle({ id, imageUrl }) {
@@ -21,6 +20,6 @@ export default function DeleteArticle({ id, imageUrl }) {
         }
     };
     return (
-        <p onClick={handleDelete} className="cursor-pointer" >Delete</p>
+        <button onClick={handleDelete} className="cursor-pointer transition-all duration-300 border-[1.3px] border-red-500 py-2 px-2 rounded-md hover:bg-red-500 hover:text-white  " >Delete</button>
     );
 }
