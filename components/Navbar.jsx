@@ -8,7 +8,7 @@ const Navbar = ({ theme, setTheme }) => {
 
     return (
         <header>
-            <div className="body-font sticky top-0 shadow-md bg-[#fff] dark:bg-[#101317] ">
+            <div className="body-font sticky top-0 shadow-md bg-[#fff] dark:bg-[#101317]">
                 <div className="container mx-auto flex flex-wrap px-5 py-3 flex-col md:flex-row items-center">
                     <div className={`flex title-font font-medium items-center ${theme === 'dark' ? 'text-white' : 'text-gray-900'} mb-4 md:mb-0`}>
                         <div className='w-14 h-14'><Image src={logo} alt='logo' /></div>
