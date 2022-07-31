@@ -1,7 +1,8 @@
 import Image from 'next/image'
 import React from 'react'
 import logo from '../public/logo.webp'
-import { GrSun, GrMoon } from 'react-icons/gr'
+import { FaRegMoon } from 'react-icons/fa'
+import { FiSun } from 'react-icons/fi'
 
 const Navbar = ({ theme, setTheme }) => {
 
@@ -16,8 +17,8 @@ const Navbar = ({ theme, setTheme }) => {
                     <nav className="md:ml-auto flex flex-wrap items-center text-base justify-center">
                         <a className={`mr-5 ${theme === 'dark' ? 'text-white' : 'text-gray-900'} font-bold`}>Hello there 👋🏼</a>
                     </nav>
-                    <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={`border-[2px] ${ theme === 'dark' ? 'border-white hover:bg-white' : 'border-black hover:bg-black'} rounded-md p-2 transition-all duration-500 group`}>
-                        {theme === 'dark' ? <GrMoon className='group-hover:text-white' color='white' size={20} /> : <GrSun className='group-hover:text-white'  size={20} />}
+                    <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={`border-[2px] ${theme === 'dark' ? 'border-white hover:bg-white' : 'border-black hover:bg-black'} rounded-md p-2 transition-all duration-500 group`}>
+                        {theme === 'dark' ? <FaRegMoon className='group-hover:text-black' size={20} /> : <FiSun className='group-hover:text-white z-50' size={20} />}
                     </button>
                 </div>
             </header>
