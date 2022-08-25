@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
-import { db, storage } from '../firebase'
+import { Progress } from '@mantine/core'
 import { addDoc, collection, onSnapshot, orderBy, query, Timestamp } from 'firebase/firestore'
 import { getDownloadURL, ref, uploadBytesResumable } from 'firebase/storage'
+import React, { useEffect, useState } from 'react'
 import { toast } from 'react-toastify'
+import { db, storage } from '../firebase'
 import ArticleDelete from './ArticleDelete'
-import { Progress } from '@mantine/core';
 
 
 const ImageUploader = ({ theme }) => {
@@ -86,26 +86,28 @@ const ImageUploader = ({ theme }) => {
     }
 
     return (
-        <main className='grid grid-cols-2  '>
+        <div className='grid grid-cols-2  '>
             <div className="flex col-span-1 h-fit fixed ml-40 mt-20">
-                <div className={`max-w-2xl rounded-lg shadow-xl ${theme === 'dark' ? 'bg-[#535352]' : 'bg-gray-50'}`}>
+                <div className={`max-w-2xl w-80 rounded-lg shadow-xl ${theme === 'dark' ? 'bg-[#535352]' : 'bg-gray-50'}`}>
 
                     <div className="m-4">
-                        <div className={`inline-block mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-500'}`}>File Upload</div>
-                        <div className="flex items-center justify-center w-full">
+                        <div className={`inline-block mb-2 ${theme === 'dark' ? 'text-white' : 'text-gray-500'}`}>
+                            File Upload
+                        </div>
+                        <div className="flex items-center justify-center w-full group">
                             <div
-                                className={`flex flex-col w-full h-32 border-4 border-blue-200 border-dashed ${theme === 'dark' ? 'hover:bg-gray-500 hover:border-gray-200' : 'hover:bg-gray-100 hover:border-gray-300'}`}>
+                                className={`flex flex-col w-full h-32 border-4 border-blue-200 border-dashed ${theme === 'dark' ? 'group-hover:bg-gray-500 group-hover:border-gray-200' : 'group-hover:bg-gray-100 group-hover:border-gray-300'}`}>
                                 <div className="flex flex-col items-center justify-center pt-7">
-                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-gray-400 group-hover:text-gray-600"
+                                    <svg xmlns="http://www.w3.org/2000/svg" className="w-8 h-8 text-gray-400"
                                         fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2"
                                             d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
                                     </svg>
-                                    <p className={`pt-1 text-sm tracking-wider ${theme === 'dark' ? 'text-white group-hover:text-black' : 'text-gray-400 group-hover:text-gray-600'} `}>
+                                    <span className={`pt-1 text-sm tracking-wider ${theme === 'dark' ? 'text-white' : 'text-gray-400'} `}>
                                         Attach a file
-                                    </p>
+                                    </span>
+                                    <input name='image' onChange={(e) => handleImageChange(e)} type="file" className="opacity-0 z-50 absolute w-full h-[120px] " />
                                 </div>
-                                <input name='image' onChange={(e) => handleImageChange(e)} type="file" className="opacity-0" />
                             </div>
                         </div>
                     </div>
@@ -121,11 +123,11 @@ const ImageUploader = ({ theme }) => {
                     </div>
 
                     <div className="flex justify-center flex-col p-2">
-                        {formData.image?.name ? <p>{formData.image?.name}</p> : <p>No file selected</p>}
+                        {formData.image?.name ? <span>{formData.image?.name}</span> : <span>No file selected</span>}
 
                         <button onClick={handlePublish} className="w-full my-2 px-4 py-2 text-white hover:bg-[#5e6ac0] bg-[#3f51d8] rounded shadow-xl">
 
-                            {progress > 0 ? <p>
+                            {progress > 0 ? <span>
                                 <Progress
                                     mt="sm"
                                     size="xl"
@@ -134,7 +136,7 @@ const ImageUploader = ({ theme }) => {
                                     label={`Uploading ${progress}%`}
                                     color="blue"
                                 />
-                            </p>
+                            </span>
                                 : 'Upload'}
 
                         </button>
@@ -172,8 +174,7 @@ const ImageUploader = ({ theme }) => {
                     })}
                 </div>
             </div>
-        </main>
-
+        </div>
     )
 }
 
