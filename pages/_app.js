@@ -1,7 +1,7 @@
-import { UserContextProvider } from '../context/userContext'
-import '../styles/globals.css'
 import 'font-awesome/css/font-awesome.min.css'
 import { ThemeProvider } from 'next-themes'
+import { UserContextProvider } from '../context/userContext'
+import '../styles/globals.css'
 
 function MyApp({ Component, pageProps }) {
   return (

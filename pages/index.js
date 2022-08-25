@@ -1,13 +1,13 @@
+import { useTheme } from 'next-themes'
 import Head from 'next/head'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import ImageUploader from '../components/ImageUploader'
 import Navbar from '../components/Navbar'
-import { useTheme } from 'next-themes'
 
 export default function Home() {
 
-  
+
   const { theme, setTheme } = useTheme()
 
   return (
