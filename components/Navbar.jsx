@@ -9,16 +9,22 @@ const Navbar = ({ theme, setTheme }) => {
     return (
         <div>
             <div className="body-font sticky top-0 shadow-md bg-[#fff] dark:bg-[#101317]">
-                <div className="container mx-auto flex flex-wrap px-5 py-3 flex-col md:flex-row items-center">
-                    <div className={`flex title-font font-medium items-center mb-4 md:mb-0 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
-                        {/* <div className='w-14 h-14'> */}
-                        <Image width={56} height={56} src={logo} alt='logo' />
-                        {/* </div> */}
+                <div className="container flex items-center justify-between p-5 md:flex-row">
+
+                    {/* logo  */}
+                    <div className={`flex title-font font-medium items-center md:mb-0 ${theme === 'dark' ? 'text-white' : 'text-gray-900'}`}>
+                        <div className='w-10 h-10'>
+                            <Image src={logo} alt='logo' />
+                        </div>
                         <span className="ml-3 text-xl">CloudImage</span>
                     </div>
-                    <div className="md:ml-auto flex flex-wrap items-center text-base justify-center">
+
+                    {/* Hello there  */}
+                    <div className="md:ml-auto hidden sm:flex flex-wrap items-center text-base justify-center">
                         <div className={`mr-5 ${theme === 'dark' ? 'text-white' : 'text-gray-900'} font-bold`}>Hello there 👋🏼</div>
                     </div>
+
+                    {/* dark mode button  */}
                     <button onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} className={`border-[2px] ${theme === 'dark' ? 'border-white hover:bg-white' : 'border-black hover:bg-black'} rounded-md p-2 transition-all duration-500 group`}>
                         {theme === 'dark' ? <FaRegMoon className='group-hover:text-black' size={20} /> : <FiSun className='group-hover:text-white' size={20} />}
                     </button>
