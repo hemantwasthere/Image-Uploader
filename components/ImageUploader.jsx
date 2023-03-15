@@ -78,7 +78,7 @@ const ImageUploader = ({ theme }) => {
     };
 
     function truncateString(str, num) {
-        if (str.length > num) {
+        if (str?.length > num) {
             return str.slice(0, num) + "...";
         } else {
             return str;
@@ -153,7 +153,7 @@ const ImageUploader = ({ theme }) => {
             </div>
 
             <div className='mx-auto mt-[24px]'>
-                {articles.length > 0 ? <p className={` text-xl pl-4 py-4 font-bold tracking-wider ${theme === 'dark' ? 'text-white' : 'text-gray-700'} `}>All Uploads</p> : <p className={` text-xl pl-4 py-4 font-bold tracking-wider ${theme === 'dark' ? 'text-white' : 'text-gray-700'} `}>Please Upload any image to see here</p>}
+                {articles.length > 0 ? <p className={` text-xl pl-4 py-4 font-bold tracking-wider ${theme === 'dark' ? 'text-white' : 'text-gray-700'} `}>All Uploads</p> : <p className={` text-xl pl-4 py-4 font-bold tracking-wider ${theme === 'dark' ? 'text-white' : 'text-gray-700'} `}>Please Upload any image or gif to see here</p>}
                 <div className='px-2 h-[480px] sm:h-[540px] overflow-y-scroll scrollbar-thin scrollbar-thumb-black scroll-smooth'>
                     <div className='h-fit'>
                         {articles.map(({ id, title, description, imageUrl, createdAt }) => {
