@@ -16,7 +16,7 @@ const Navbar = ({ theme, setTheme }) => {
                         <div className='w-10 h-10'>
                             <Image src={logo} alt='logo' />
                         </div>
-                        <span className="ml-3 text-xl">CloudImage</span>
+                        <span className="ml-3 text-xl">CloudAge</span>
                     </div>
 
                     {/* Hello there  */}
